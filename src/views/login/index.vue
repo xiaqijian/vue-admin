@@ -30,16 +30,16 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
+// import { isvalidUsername } from '@/utils/validate'
 
 export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      if (value == "") {
+         callback(new Error('不能为空哦'))
       } else {
-        callback()
+         callback()
       }
     }
     const validatePass = (rule, value, callback) => {
@@ -51,8 +51,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: 'superqxgl',
+        password: 'zpepc001qxgl'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -61,6 +61,9 @@ export default {
       loading: false,
       pwdType: 'password'
     }
+  },
+  mounted() {
+    
   },
   methods: {
     showPwd() {
@@ -71,15 +74,31 @@ export default {
       }
     },
     handleLogin() {
+      const that = this
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          console.log(22222)
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: '/' })
-          }).catch(() => {
+          that.$axios({
+            method: 'post',
+            url:'api/Login!login.action', 
+            data: that.qs.stringify(that.loginForm)
+          }).then((val) => {
+            that.loading = false
+            localStorage.setItem('ms_username', '2222');
+            that.$router.push({ path: '/' })
+            console.log(val)
+          }).catch((err) => {
+            console.log(err)
             this.loading = false
           })
+
+          // this.$store.dispatch('Login', this.loginForm).then(() => {
+          //   this.loading = false
+          //   this.$router.push({ path: '/' })
+          // }).catch(() => {
+          //   this.loading = false
+          // })
         } else {
           console.log('error submit!!')
           return false
